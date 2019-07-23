@@ -1,69 +1,91 @@
 package net.khlim.swipe2;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.CompoundButton;
-import android.widget.ToggleButton;
+import android.widget.ImageView;
 import android.widget.ViewFlipper;
 
-/**
- * Created by khlim on 23/07/2019.
- */
+import java.util.ArrayList;
+import java.util.List;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity implements ViewFlipperAction.ViewFlipperCallback {
 
-
+    //뷰플리퍼
     ViewFlipper flipper;
-    ToggleButton toggle_Flipping;
+    //인덱스
+    List<ImageView> indexes;
+
 
     @Override
-    public void onCreate(Bundle savedInstranceState){
-        super.onCreate(savedInstranceState);
-
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.d("ddd", "hello");
 
+        //UI
         flipper = (ViewFlipper)findViewById(R.id.flipper);
 
-        Animation showin = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
-        flipper.setInAnimation(showin);
-        flipper.setOutAnimation(this, android.R.anim.slide_out_right);
+        ImageView index0 = new ImageView(this);
+        index0.setImageResource(R.drawable.a);
 
+        ImageView index1 = new ImageView(this);
+        index1.setImageResource(R.drawable.b);
 
-        toggle_Flipping = (ToggleButton)findViewById(R.id.toggle_auto);
+        ImageView index2 = new ImageView(this);
+        index2.setImageResource(R.drawable.c);
 
-        toggle_Flipping.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        //인덱스리스트
+//        indexes = new ArrayList<ImageView>();
+//        indexes.add(index0);
+//        indexes.add(index1);
+//        indexes.add(index2);
+//
+//        //xml을 inflate 하여 flipper view에 추가하기
+//        //inflate
+//        LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+//        View view1 = inflater.inflate(R.layout.viewflipper1, flipper, false);
+//        View view2 = inflater.inflate(R.layout.viewflipper2, flipper, false);
+//        View view3 = inflater.inflate(R.layout.viewflipper3, flipper, false);
+        //inflate 한 view 추가
+        flipper.addView(index0);
+        flipper.addView(index1);
+        flipper.addView(index2);
+
+        //리스너설정 - 좌우 터치시 화면넘어가기
+//        flipper.setOnTouchListener(new ViewFlipperAction(this, flipper));
+
+        flipper.setOnTouchListener(new View.OnTouchListener(){
+
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            public boolean onTouch(View view, MotionEvent motionEvent) {
 
-                if(b){
-                    flipper.setFlipInterval(1000);
-                    flipper.startFlipping();
-                }else{
-                    flipper.stopFlipping();
-                }
-
-
+                Log.d("ddd", "touch!");
+                return false;
             }
         });
 
 
-
     }
 
-
-    public void mOnClick(View v){
-        switch (v.getId()){
-            case R.id.btn_previous :
-                flipper.showPrevious();
-                break;
-            case R.id.btn_next :
-                flipper.showNext();
-                break;
+    //인덱스 업데이트
+    @Override
+    public void onFlipperActionCallback(int position) {
+        Log.d("ddd", ""+position);
+        for(int i=0; i<indexes.size(); i++){
+            ImageView index = indexes.get(i);
+            //현재화면의 인덱스 위치면 녹색
+            if(i == position){
+                index.setImageResource(R.drawable.a);
+            }
+            //그외
+            else{
+                index.setImageResource(R.drawable.b);
+            }
         }
     }
-
 }
